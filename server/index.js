@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
   })
 })
 
-app.listen(process.env.PORT || 5000, async () => {
+app.listen(process.env.PORT || 8800, async () => {
   connect()
   console.log('Database is loading...')
 })
