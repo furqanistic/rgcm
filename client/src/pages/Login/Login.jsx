@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import './Login.css'
 import axios from 'axios'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { loginStart, loginSuccess } from '../../redux/userSlice'
-import { axiosInstance } from '../../config'
 import { useNavigate } from 'react-router-dom'
+import { axiosInstance } from '../../config'
+import { loginStart, loginSuccess } from '../../redux/userSlice'
+import './Login.css'
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
