@@ -2,7 +2,9 @@ import { Delete } from '@mui/icons-material'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { TailSpin, ThreeDots } from 'react-loader-spinner'
+
 import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -302,9 +304,20 @@ const NewBooking = () => {
         paymentStatus,
       })
       SetIsCreating(false)
-      navigate('/find/all')
+      if (response.status === 200 || response.status === 201) {
+        toast.success('Form Submitted Successfully', {
+          duration: 4000,
+        })
+        resetForm()
+        setRecentBookings(false)
+        refetch()
+      } else {
+        toast.error('Submission Failed. Please try again!', {
+          duration: 4000,
+        })
+      }
     } catch (err) {
-      console.log(err)
+      toast.error(err)
     }
   }
 
@@ -412,7 +425,7 @@ const NewBooking = () => {
   }
 
   // getting serial for user
-  const { data, status } = useQuery(
+  const { data, status, refetch } = useQuery(
     'serial',
     async () => {
       const res = await axiosInstance.get(`/booking/last/serial`)
@@ -442,6 +455,38 @@ const NewBooking = () => {
     'Upper Deck',
     'Banquett & Upper Deck',
   ]
+
+  const resetForm = () => {
+    setDish('')
+    setDishes([])
+    setDate('')
+    setDateError(null)
+    setHost('')
+    setFunctionType('')
+    setContact('')
+    setLocation('')
+    setPerHead('')
+    setFoodAmount('')
+    setStageAmount('')
+    setDecorationLights('')
+    setSoundSystem('')
+    setColdDrink('')
+    setAdvancePay('')
+    setHallRentBalc('')
+    setExtraDecor('')
+    setOthers('')
+    setDiscount('')
+    setFunctionCat('')
+    setFormType('Regular')
+    setTimings('')
+    setTotalAmount('')
+    setNumberOfGuests('')
+    setFromDate(null)
+    setToDate(null)
+    setNotes([])
+    setCurrentNote('')
+    setPaymentStatus('')
+  }
   return (
     <Layout>
       <ToastContainer />

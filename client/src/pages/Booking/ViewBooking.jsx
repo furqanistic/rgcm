@@ -41,9 +41,9 @@ const FormInput = styled.input`
   font-size: 1rem;
   padding: 0.5rem;
   border: 0px solid black;
-  border-radius: 4px;
   outline: none;
   text-transform: capitalize;
+  border-bottom: 1px solid black;
 `
 const InputSet = styled.div`
   display: flex;

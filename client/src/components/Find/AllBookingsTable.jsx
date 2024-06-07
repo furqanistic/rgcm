@@ -2,7 +2,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { DataGrid } from '@mui/x-data-grid'
 import * as React from 'react'
 import { useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
+import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -96,7 +97,6 @@ export default function AllBookingsTable() {
 
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
-  const queryClient = useQueryClient()
 
   const handleDeleteInvoice = async (event, personID) => {
     const data = {
@@ -104,8 +104,20 @@ export default function AllBookingsTable() {
     }
     event.stopPropagation() // This stops the event from propagating further.
     try {
-      await axiosInstance.put(`/booking/invoice/${personID}/delete`, data)
-      await queryClient.invalidateQueries('stats-all-bookings')
+      const response = await axiosInstance.put(
+        `/booking/invoice/${personID}/delete`,
+        data
+      )
+      if (response.status === 200 || response.status === 201) {
+        toast.success('Form Deleted Successfully', {
+          duration: 4000,
+        })
+        refetch()
+      } else {
+        toast.error('Delete Failed. Please try again!', {
+          duration: 4000,
+        })
+      }
     } catch (err) {
       console.log(err)
     }
@@ -162,7 +174,7 @@ export default function AllBookingsTable() {
     },
   ]
 
-  const { data, status } = useQuery('stats-all-bookings', async () => {
+  const { data, status, refetch } = useQuery('stats-all-bookings', async () => {
     const res = await axiosInstance.get(`/booking/all-bookings`)
     return res.data
   })

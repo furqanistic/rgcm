@@ -21,13 +21,12 @@ const Right = styled.div`
   background-color: #00000081;
 `
 const UserBox = styled.div`
-  width: 150px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000000;
-  padding: 0.5rem;
+  background-color: #00000097;
+  padding: 0.5rem 1rem;
   border-radius: 30px;
   position: absolute;
   color: white;
@@ -35,28 +34,19 @@ const UserBox = styled.div`
   top: 10px;
 `
 const UserText = styled.p`
-  font-size: 0.8rem;
-  font-weight: 300;
-  margin-left: 10px;
+  font-size: 1rem;
+  font-weight: 400;
 `
 const Layout = ({ children }) => {
   const { currentUser } = useSelector((state) => state.user)
 
-  const [showBar, setShowBar] = useState(true)
-
-  const setValue = () => {
-    setShowBar(!showBar)
-  }
   return (
     <Wrap>
-      <Left>{showBar && <Sidebar />}</Left>
+      <Left>
+        <Sidebar />
+      </Left>
       <Right>
         <UserBox>
-          {showBar ? (
-            <RemoveRedEye onClick={setValue} style={{ color: 'red' }} />
-          ) : (
-            <VisibilityOff onClick={setValue} style={{ color: 'red' }} />
-          )}
           <UserText>{currentUser.username}</UserText>
         </UserBox>
         {children}
