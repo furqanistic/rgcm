@@ -2,6 +2,7 @@ import { Delete } from '@mui/icons-material'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import Layout from '../../Layout'
@@ -247,10 +248,12 @@ const EditBooking = () => {
         }
       )
       if (response.status === 200) {
-        alert('Booking updated successfully!')
+        toast.success('Booking Updated Successfully', {
+          duration: 4000,
+        })
         navigate(`/view/${params.id}`)
       } else {
-        alert('Failed to update booking. Please try again.')
+        toast.error('Failed to update booking. Please try again.')
       }
     } catch (err) {
       console.log(err)

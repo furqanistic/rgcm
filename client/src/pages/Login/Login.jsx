@@ -1,8 +1,10 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { axiosInstance } from '../../config'
+
 import { loginStart, loginSuccess } from '../../redux/userSlice'
 import './Login.css'
 const Login = () => {
@@ -19,9 +21,12 @@ const Login = () => {
         password,
       })
       dispatch(loginSuccess(res.data))
+      toast.success('Login Successfull', {
+        duration: 4000,
+      })
       navigate('/')
     } catch (err) {
-      console.log(err)
+      toast.error('Wrong Email Or Password')
     }
   }
   return (

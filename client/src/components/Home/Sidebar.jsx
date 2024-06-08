@@ -164,7 +164,7 @@ const Sidebar = () => {
           <Item
             onClick={handleClick}
             style={{
-              backgroundColor: '#a705056b',
+              backgroundColor: '#f90303e8',
               color: '#ffffff',
             }}
           >

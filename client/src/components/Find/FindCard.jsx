@@ -61,13 +61,13 @@ const ActionLink = styled.a`
   font-weight: 600;
   cursor: pointer;
   &.new {
-    background-color: #a600a9;
+    background-color: #01470f;
     color: rgba(255, 255, 255, 1);
   }
 
   &.update-booking {
     margin-top: 0.5rem;
-    background-color: #016c8a;
+    background-color: #015f64;
     color: #ffffff;
   }
   &.delete-booking {
@@ -77,12 +77,12 @@ const ActionLink = styled.a`
   }
   &.temp-booking {
     margin-top: 0.5rem;
-    background-color: #444444;
+    background-color: #412424;
     color: #ffffff;
   }
   &.monthly-booking {
     margin-top: 0.5rem;
-    background-color: #7d8401;
+    background-color: #b3038d;
     color: #ffffff;
   }
 `
