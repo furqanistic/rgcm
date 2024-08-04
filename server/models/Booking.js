@@ -93,7 +93,6 @@ const bookingSchema = new mongoose.Schema(
     },
     expirationDate: {
       type: Date,
-      default: null,
       expires: 0, // This will set a TTL index on this field
     },
     isDeleted: {

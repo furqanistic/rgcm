@@ -252,7 +252,7 @@ const NewBooking = () => {
   const [extraDecor, setExtraDecor] = useState('')
   const [others, setOthers] = useState('')
   const [discount, setDiscount] = useState('')
-  const [functionCat, setFunctionCat] = useState('')
+  const [functionCat, setFunctionCat] = useState('Permanent')
   const [formType, setFormType] = useState('Regular')
   const [timings, setTimings] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
@@ -267,43 +267,53 @@ const NewBooking = () => {
   const [usernames, setUsernames] = useState([])
 
   const navigate = useNavigate()
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     SetIsCreating(true)
+
+    // Create the base payload
+    let payload = {
+      perHead,
+      foodAmount,
+      stageAmount,
+      decorationLights,
+      soundSystem,
+      coldDrink,
+      advancePay,
+      hallRentBalc,
+      extraDecor,
+      others,
+      discount,
+      totalAmount,
+      host,
+      numberOfGuests,
+      functionType,
+      contact,
+      location,
+      date,
+      BookedBy: currentUser,
+      serialNo: serialNumber + 1,
+      dishes,
+      timings,
+      functionCat,
+      formType: 'Regular',
+      fromDate,
+      toDate,
+      notes,
+      paymentStatus,
+    }
+    // Conditionally add expirationDate to the payload if functionCat is 'Temporary'
+    if (functionCat === 'Temporary') {
+      payload.expirationDate = toDate
+    }
+
     try {
-      const response = await axiosInstance.post('/booking/create-booking', {
-        perHead,
-        foodAmount,
-        stageAmount,
-        decorationLights,
-        soundSystem,
-        coldDrink,
-        advancePay,
-        hallRentBalc,
-        extraDecor,
-        others,
-        discount,
-        totalAmount,
-        host,
-        numberOfGuests,
-        functionType,
-        contact,
-        location,
-        date,
-        BookedBy: currentUser,
-        serialNo: serialNumber + 1,
-        dishes,
-        timings,
-        functionCat,
-        formType: 'Regular',
-        fromDate,
-        toDate,
-        expirationDate: toDate,
-        notes,
-        paymentStatus,
-      })
+      const response = await axiosInstance.post(
+        '/booking/create-booking',
+        payload
+      )
       SetIsCreating(false)
+
       if (response.status === 200 || response.status === 201) {
         toast.success('Form Submitted Successfully', {
           duration: 4000,
@@ -317,7 +327,10 @@ const NewBooking = () => {
         })
       }
     } catch (err) {
-      toast.error(err)
+      SetIsCreating(false)
+      toast.error('An error occurred: ' + err.message, {
+        duration: 4000,
+      })
     }
   }
 
@@ -476,7 +489,7 @@ const NewBooking = () => {
     setExtraDecor('')
     setOthers('')
     setDiscount('')
-    setFunctionCat('')
+    setFunctionCat('Permanent')
     setFormType('Regular')
     setTimings('')
     setTotalAmount('')
@@ -569,16 +582,16 @@ const NewBooking = () => {
               <FormText>From Date:</FormText>
               <FormInput
                 type='date'
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
+                value={fromDate || ''} // Ensure value is never null
+                onChange={(e) => setFromDate(e.target.value || '')} // Set to empty string if cleared
               />
             </InputSet>
             <InputSet>
               <FormText>To Date:</FormText>
               <FormInput
                 type='date'
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
+                value={toDate || ''} // Ensure value is never null
+                onChange={(e) => setToDate(e.target.value || '')} // Set to empty string if cleared
               />
             </InputSet>
           </InputWrap>

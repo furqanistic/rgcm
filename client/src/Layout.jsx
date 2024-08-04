@@ -11,7 +11,8 @@ const Wrap = styled.div`
   text-transform: capitalize;
 `
 const Left = styled.div`
-  max-width: 250px;
+  max-width: 300px;
+  padding: 0 1rem;
   min-height: 100%;
   background-color: black;
 `
