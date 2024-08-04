@@ -1,10 +1,9 @@
 import { Delete } from '@mui/icons-material'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { TailSpin, ThreeDots } from 'react-loader-spinner'
 
+import React, { useEffect, useState } from 'react'
+import { Detector, Offline, Online } from 'react-detect-offline'
+import toast from 'react-hot-toast'
+import { ThreeDots } from 'react-loader-spinner'
 import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -264,50 +263,56 @@ const NewBooking = () => {
   const [notes, setNotes] = useState([])
   const [currentNote, setCurrentNote] = useState('')
   const [paymentStatus, setPaymentStatus] = useState('')
-  const [usernames, setUsernames] = useState([])
+  const [isInternetSlow, setIsInternetSlow] = useState(false)
 
   const navigate = useNavigate()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     SetIsCreating(true)
 
-    // Create the base payload
-    let payload = {
-      perHead,
-      foodAmount,
-      stageAmount,
-      decorationLights,
-      soundSystem,
-      coldDrink,
-      advancePay,
-      hallRentBalc,
-      extraDecor,
-      others,
-      discount,
-      totalAmount,
-      host,
-      numberOfGuests,
-      functionType,
-      contact,
-      location,
-      date,
-      BookedBy: currentUser,
-      serialNo: serialNumber + 1,
-      dishes,
-      timings,
-      functionCat,
-      formType: 'Regular',
-      fromDate,
-      toDate,
-      notes,
-      paymentStatus,
-    }
-    // Conditionally add expirationDate to the payload if functionCat is 'Temporary'
-    if (functionCat === 'Temporary') {
-      payload.expirationDate = toDate
-    }
-
     try {
+      // Refetch the latest serial number right before creating the booking
+      const serialResponse = await axiosInstance.get('/booking/last/serial')
+      const newSerialNumber = serialResponse.data.serialNo + 1 // Increment the serial number safely
+
+      // Create the base payload with the new serial number
+      let payload = {
+        perHead,
+        foodAmount,
+        stageAmount,
+        decorationLights,
+        soundSystem,
+        coldDrink,
+        advancePay,
+        hallRentBalc,
+        extraDecor,
+        others,
+        discount,
+        totalAmount,
+        host,
+        numberOfGuests,
+        functionType,
+        contact,
+        location,
+        date,
+        BookedBy: currentUser,
+        serialNo: newSerialNumber,
+        dishes,
+        timings,
+        functionCat,
+        formType: 'Regular',
+        fromDate,
+        toDate,
+        notes,
+        paymentStatus,
+      }
+
+      // Conditionally add expirationDate to the payload if functionCat is 'Temporary'
+      if (functionCat === 'Temporary') {
+        payload.expirationDate = toDate
+      }
+
       const response = await axiosInstance.post(
         '/booking/create-booking',
         payload
@@ -320,7 +325,7 @@ const NewBooking = () => {
         })
         resetForm()
         setRecentBookings(false)
-        refetch()
+        refetch() // Optional: refetch might be redundant here unless you need to refresh other data
       } else {
         toast.error('Submission Failed. Please try again!', {
           duration: 4000,

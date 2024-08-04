@@ -1,5 +1,3 @@
-// PaymentNotification.jsx
-
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import { axiosInstance } from '../../config'
@@ -14,13 +12,19 @@ const PaymentNotification = () => {
     },
     {
       onSuccess: (data) => {
-        data.forEach((booking) => {
+        // Assuming each booking has a 'date' or 'createdAt' field to sort by
+        const sortedBookings = data
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 7)
+        sortedBookings.forEach((booking) => {
+          // Assuming 'booking' has some identifiable information like 'bookingId'
           toast.warn(`Payment for ${booking} is pending!`, {
             position: 'top-right',
+            autoClose: 5000,
           })
         })
       },
-      staleTime: 1000 * 60 * 60 * 24,
+      staleTime: 1000 * 60 * 60 * 24, // 1 day
     }
   )
 
