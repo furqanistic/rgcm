@@ -1,21 +1,23 @@
-import { AddBox } from '@mui/icons-material'
+import { BarChart, Calendar, Clock, Plus } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Card = styled.div`
   max-width: 520px;
-  border-width: 1px;
-  border-color: rgba(219, 234, 254, 1);
+  border: 1px solid rgba(219, 234, 254, 1);
   border-radius: 1rem;
-  background-color: rgba(255, 255, 255, 1);
-  padding: 1rem;
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 `
 
 const Header = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-bottom: 1.5rem;
 `
 
 const Icon = styled.span`
@@ -25,93 +27,83 @@ const Icon = styled.span`
   justify-content: center;
   border-radius: 9999px;
   background-color: #232222;
-  padding: 0.5rem;
-  color: rgba(255, 255, 255, 1);
-
-  svg {
-    height: 1.7rem;
-    width: 1.7rem;
-  }
+  padding: 0.75rem;
+  color: white;
 `
 
-const Alert = styled.p`
+const Alert = styled.h2`
   font-weight: 600;
-  color: rgba(107, 114, 128, 1);
-  font-size: 1.2rem;
-`
-
-const Message = styled.p`
-  margin-top: 1rem;
-  color: rgba(107, 114, 128, 1);
+  color: #374151;
+  font-size: 1.25rem;
+  margin: 0;
 `
 
 const Actions = styled.div`
-  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.75rem;
 `
 
-const ActionLink = styled.a`
+const ActionLink = styled(Link)`
   text-decoration: none;
-  display: inline-block;
+  display: block;
   border-radius: 0.5rem;
-  width: 100%;
   padding: 1rem 1.5rem;
   text-align: center;
-  font-size: 1.3rem;
-  line-height: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  cursor: pointer;
-  &.new {
-    background-color: #01470f;
-    color: rgba(255, 255, 255, 1);
+  transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
-  &.update-booking {
-    margin-top: 0.5rem;
-    background-color: #015f64;
-    color: #ffffff;
-  }
-  &.delete-booking {
-    margin-top: 0.5rem;
-    background-color: #a16100;
-    color: #ffffff;
-  }
-  &.temp-booking {
-    margin-top: 0.5rem;
-    background-color: #412424;
-    color: #ffffff;
-  }
-  &.monthly-booking {
-    margin-top: 0.5rem;
-    background-color: #b3038d;
-    color: #ffffff;
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
   }
 `
-const Linker = styled(Link)`
-  text-decoration: none;
-`
+
+const cardItems = [
+  { name: 'Bookings', path: 'all', color: '#01470f', icon: Plus },
+  {
+    name: 'Permanent Bookings',
+    path: 'all-perm',
+    color: '#015f64',
+    icon: Calendar,
+  },
+  {
+    name: 'Temporary Bookings',
+    path: 'all-temp',
+    color: '#412424',
+    icon: Clock,
+  },
+  { name: 'Monthly Chart', path: 'by-month', color: '#b3038d', icon: BarChart },
+]
 
 const FindCard = () => (
   <Card>
     <Header>
       <Icon>
-        <AddBox />
+        <Plus size={24} />
       </Icon>
       <Alert>Find Forms Here</Alert>
     </Header>
     <Actions>
-      <Linker to='all'>
-        <ActionLink className='new'>Bookings</ActionLink>
-      </Linker>
-
-      <Linker to='all-perm'>
-        <ActionLink className='update-booking'>Permanent Bookings</ActionLink>
-      </Linker>
-      <Linker to='all-temp'>
-        <ActionLink className='temp-booking'>Temporary Bookings</ActionLink>
-      </Linker>
-      <Linker to='by-month'>
-        <ActionLink className='monthly-booking'>Monthly Chart</ActionLink>
-      </Linker>
+      {cardItems.map((item) => (
+        <ActionLink
+          key={item.path}
+          to={item.path}
+          style={{ backgroundColor: item.color, color: 'white' }}
+        >
+          <item.icon
+            size={18}
+            style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}
+          />
+          {item.name}
+        </ActionLink>
+      ))}
     </Actions>
   </Card>
 )

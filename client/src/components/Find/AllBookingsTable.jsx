@@ -1,5 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { DataGrid } from '@mui/x-data-grid'
+import { Eye, FileDown } from 'lucide-react'
 import * as React from 'react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -9,52 +10,52 @@ import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import * as XLSX from 'xlsx'
 import { axiosInstance } from '../../config'
-
-import { Visibility } from '@mui/icons-material'
-import { MenuItem, Select } from '@mui/material'
 import Loader from '../../Loader'
-// The rest of your imports remain unchanged
 
-const GreenBtn = styled.button`
-  background-color: #012d01;
-  padding: 0.5rem 0.8rem;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 3rem;
-`
-const StyledGreenBtn = styled(GreenBtn)`
-  /* padding: 10px 15px; */
-  width: auto;
-`
-const StyledSelect = styled(Select)`
-  min-width: 120px;
-`
+// Styled components
 const FiltersContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px; // Adds space between each child element
-  padding: 10px; // Adds padding around the container for spacing from edges
-  background-color: #f5f5f5; // Optional: adds a background color for visual distinction
-  border-radius: 8px; // Optional: rounds the corners of the container
-  margin-bottom: 20px; // Adds space between this container and the table below
+  gap: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 20px;
 `
-const CapitalizeDataGridWrapper = styled.div`
-  && .MuiDataGrid-columnHeaders,
-  .MuiDataGrid-cell {
-    text-transform: capitalize;
+
+const StyledSelect = styled.select`
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 14px;
+  min-width: 120px;
+`
+
+const StyledButton = styled.button`
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    opacity: 0.9;
   }
 `
 
-const StyledDataGrid = styled(DataGrid)`
-  .greenRow {
-    background-color: #01ac01b7 !important;
-  }
-  .blueRow {
-    background-color: #4b005ab1 !important;
-    color: white; // Optional, for better text visibility
-  }
+const GreenButton = styled(StyledButton)`
+  background-color: #012d01;
+  color: white;
+`
+
+const YellowButton = styled(StyledButton)`
+  background-color: #ffdd01;
+  color: #000000;
 `
 
 const DeleteBtn = styled.button`
@@ -68,20 +69,29 @@ const DeleteBtn = styled.button`
   border-radius: 10px;
   cursor: pointer;
 `
-const GenBtn = styled(GreenBtn)`
-  background-color: #ffdd01;
-  color: #000000;
-  display: flex;
-  align-items: center;
-  text-transform: capitalize;
+
+const CapitalizeDataGridWrapper = styled.div`
+  && .MuiDataGrid-columnHeaders,
+  .MuiDataGrid-cell {
+    text-transform: capitalize;
+  }
 `
 
+const StyledDataGrid = styled(DataGrid)`
+  .greenRow {
+    background-color: #01ac01b7 !important;
+  }
+  .blueRow {
+    background-color: #4b005ab1 !important;
+    color: white;
+  }
+`
+
+// Helper function
 function exportToCSV(rows) {
   const ws = XLSX.utils.json_to_sheet(rows)
   const csv = XLSX.utils.sheet_to_csv(ws)
   const blob = new Blob([csv], { type: 'text/csv' })
-
-  // Create a download link and click it
   const a = document.createElement('a')
   const url = window.URL.createObjectURL(blob)
   a.href = url
@@ -92,44 +102,29 @@ function exportToCSV(rows) {
 
 export default function AllBookingsTable() {
   const { currentUser } = useSelector((state) => state.user)
-
   const navigate = useNavigate()
-
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
 
   const handleDeleteInvoice = async (event, personID) => {
-    const data = {
-      DeletedBy: currentUser._id,
-    }
-    event.stopPropagation() // This stops the event from propagating further.
+    event.stopPropagation()
     try {
       const response = await axiosInstance.put(
         `/booking/invoice/${personID}/delete`,
-        data
+        {
+          DeletedBy: currentUser._id,
+        }
       )
       if (response.status === 200 || response.status === 201) {
-        toast.success('Form Deleted Successfully', {
-          duration: 4000,
-        })
+        toast.success('Form Deleted Successfully', { duration: 4000 })
         refetch()
       } else {
-        toast.error('Delete Failed. Please try again!', {
-          duration: 4000,
-        })
+        toast.error('Delete Failed. Please try again!', { duration: 4000 })
       }
     } catch (err) {
       console.log(err)
+      toast.error('An error occurred while deleting', { duration: 4000 })
     }
-  }
-
-  // Handle change for month and year dropdowns
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value)
-  }
-
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value)
   }
 
   const darkTheme = createTheme({
@@ -160,17 +155,13 @@ export default function AllBookingsTable() {
       headerName: 'Delete',
       sortable: false,
       width: 80,
-      renderCell: (params) => {
-        return (
-          <DeleteBtn
-            variant='contained'
-            color='primary'
-            onClick={(event) => handleDeleteInvoice(event, params.row._id)}
-          >
-            Delete
-          </DeleteBtn>
-        )
-      },
+      renderCell: (params) => (
+        <DeleteBtn
+          onClick={(event) => handleDeleteInvoice(event, params.row._id)}
+        >
+          Delete
+        </DeleteBtn>
+      ),
     },
   ]
 
@@ -183,30 +174,10 @@ export default function AllBookingsTable() {
     return <Loader />
   }
 
-  const rows = data.map((item) => {
-    // Assuming item.createdAt is in ISO format or similar
-    const date = new Date(item.createdAt)
-    const formattedDate = date.toLocaleDateString('en-GB') // This will give you dd/mm/yyyy format
-    return {
-      id: item.serialNo,
-      _id: item._id,
-      username: item.BookedBy?.username,
-      host: item.host,
-      createdAt: formattedDate, // Use the formatted date here
-      contact: item.contact,
-      location: item.location,
-      date: item.date,
-      timings: item.timings,
-      totalAmount: item.totalAmount,
-      functionCat: item.functionCat,
-      paymentStatus: item.paymentStatus,
-    }
-  })
-
   const filteredRows = data
     .filter((item) => {
-      const bookingDate = new Date(item.date) // Assuming item.date is parseable by Date constructor
-      const month = bookingDate.getMonth() + 1 // JavaScript months are 0-indexed
+      const bookingDate = new Date(item.date)
+      const month = bookingDate.getMonth() + 1
       const year = bookingDate.getFullYear()
       return (
         (!selectedMonth || month === parseInt(selectedMonth)) &&
@@ -214,7 +185,6 @@ export default function AllBookingsTable() {
       )
     })
     .map((item) => {
-      // Assuming item.createdAt is in ISO format or similar for displaying
       const createdAtDate = new Date(item.createdAt)
       const formattedCreatedAt = createdAtDate
         .toLocaleDateString('en-GB', {
@@ -222,9 +192,8 @@ export default function AllBookingsTable() {
           month: '2-digit',
           year: 'numeric',
         })
-        .replace(/\//g, '-') // Convert dd/mm/yyyy format to dd-mm-yyyy for display
+        .replace(/\//g, '-')
 
-      // You might want to format the booking date as well for consistency in display
       const formattedBookingDate = new Date(item.date)
         .toLocaleDateString('en-GB', {
           day: '2-digit',
@@ -238,10 +207,10 @@ export default function AllBookingsTable() {
         _id: item._id,
         username: item.BookedBy?.username,
         host: item.host,
-        createdAt: formattedCreatedAt, // Display purpose
+        createdAt: formattedCreatedAt,
         contact: item.contact,
         location: item.location,
-        date: item.date,
+        date: formattedBookingDate,
         timings: item.timings,
         totalAmount: item.totalAmount,
         functionCat: item.functionCat,
@@ -256,51 +225,42 @@ export default function AllBookingsTable() {
         <FiltersContainer>
           <StyledSelect
             value={selectedMonth}
-            onChange={handleMonthChange}
-            displayEmpty
-            inputProps={{ 'aria-label': 'Select Month' }}
+            onChange={(e) => setSelectedMonth(e.target.value)}
           >
-            <MenuItem value=''>
-              <em>Month</em>
-            </MenuItem>
-            {/* Month options */}
+            <option value=''>Month</option>
             {[...Array(12).keys()].map((month) => (
-              <MenuItem key={month} value={month + 1}>
+              <option key={month} value={month + 1}>
                 {new Date(0, month).toLocaleString('default', {
                   month: 'long',
                 })}
-              </MenuItem>
+              </option>
             ))}
           </StyledSelect>
           <StyledSelect
             value={selectedYear}
-            onChange={handleYearChange}
-            displayEmpty
-            inputProps={{ 'aria-label': 'Select Year' }}
+            onChange={(e) => setSelectedYear(e.target.value)}
           >
-            <MenuItem value=''>
-              <em>Year</em>
-            </MenuItem>
-            {/* Year options */}
+            <option value=''>Year</option>
             {[2023, 2024, 2025].map((year) => (
-              <MenuItem key={year} value={year}>
+              <option key={year} value={year}>
                 {year}
-              </MenuItem>
+              </option>
             ))}
           </StyledSelect>
-          <StyledGreenBtn onClick={() => exportToCSV(filteredRows)}>
+          <GreenButton onClick={() => exportToCSV(filteredRows)}>
+            <FileDown size={16} />
             Export to CSV
-          </StyledGreenBtn>
+          </GreenButton>
           <Link style={{ textDecoration: 'none' }} to='/find/deleted'>
-            <GenBtn>
-              <Visibility style={{ marginRight: '5px' }} />
+            <YellowButton>
+              <Eye size={16} />
               View Deleted
-            </GenBtn>
+            </YellowButton>
           </Link>
         </FiltersContainer>
         <CapitalizeDataGridWrapper>
           <StyledDataGrid
-            rows={filteredRows} // Use filteredRows instead of rows
+            rows={filteredRows}
             columns={columns}
             pageSize={5}
             onRowClick={(param) => navigate(`/view/${param.row._id}`)}
@@ -314,7 +274,7 @@ export default function AllBookingsTable() {
             sortModel={[
               {
                 field: 'id',
-                sort: 'desc', // Set initial sort state to descending
+                sort: 'desc',
               },
             ]}
           />
