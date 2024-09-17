@@ -4,11 +4,12 @@ import Layout from '../../Layout'
 import AllTempTable from '../../components/Find/AllTempTable'
 
 const Wrap = styled.div`
-  padding: 50px 20px;
-
+  height: 100%;
   background-color: white;
   text-transform: capitalize;
+  padding-top: 2rem;
 `
+
 const ShowAllTemp = () => {
   return (
     <Layout>

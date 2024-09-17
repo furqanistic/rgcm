@@ -149,7 +149,7 @@ export const getBookingsByUser = async (req, res) => {
     if (bookings.length > 0) {
       res.status(200).json(bookings)
     } else {
-      res.status(404).json({ message: 'This user have 0 bookings' })
+      res.status(404).json({ message: 'You have not booked anything yet' })
     }
   } catch (error) {
     res.status(500).json({ error: error.message })

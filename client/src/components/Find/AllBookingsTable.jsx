@@ -105,6 +105,8 @@ export default function AllBookingsTable() {
   const navigate = useNavigate()
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
+  const [selectedBookingMonth, setSelectedBookingMonth] = useState('')
+  const [selectedEventMonth, setSelectedEventMonth] = useState('')
 
   const handleDeleteInvoice = async (event, personID) => {
     event.stopPropagation()
@@ -134,22 +136,22 @@ export default function AllBookingsTable() {
   })
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 20 },
-    { field: 'username', headerName: 'Booked By', width: 80 },
+    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'username', headerName: 'Booked By', width: 100 },
     { field: 'host', headerName: 'Host', width: 160 },
     {
       field: 'createdAt',
-      headerName: 'Submission Date',
-      width: 100,
+      headerName: 'Booking Date',
+      width: 120,
       align: 'center',
     },
     { field: 'contact', headerName: 'Contact', width: 120 },
     { field: 'location', headerName: 'Location', width: 120 },
-    { field: 'date', headerName: 'Date', width: 110 },
+    { field: 'date', headerName: 'Event Date', width: 110 },
     { field: 'timings', headerName: 'Timings', width: 80 },
     { field: 'totalAmount', headerName: 'Total Amount', width: 80 },
     { field: 'functionCat', headerName: 'Booking Type', width: 120 },
-    { field: 'paymentStatus', headerName: 'Status', width: 70 },
+    { field: 'paymentStatus', headerName: 'Status', width: 80 },
     {
       field: 'Remove',
       headerName: 'Delete',
@@ -174,14 +176,26 @@ export default function AllBookingsTable() {
     return <Loader />
   }
 
+  const formatDate = (dateString) => {
+    const [day, month, year] = dateString.split('-')
+    return `${day}/${month}/${year}`
+  }
+
   const filteredRows = data
     .filter((item) => {
-      const bookingDate = new Date(item.date)
-      const month = bookingDate.getMonth() + 1
-      const year = bookingDate.getFullYear()
+      const [eventDay, eventMonth, eventYear] = item.date.split('-')
+      const bookingDate = new Date(item.createdAt)
+      const bookingMonth = bookingDate.getMonth() + 1
+      const bookingYear = bookingDate.getFullYear()
+
       return (
-        (!selectedMonth || month === parseInt(selectedMonth)) &&
-        (!selectedYear || year === parseInt(selectedYear))
+        (!selectedBookingMonth ||
+          bookingMonth === parseInt(selectedBookingMonth)) &&
+        (!selectedEventMonth ||
+          parseInt(eventMonth) === parseInt(selectedEventMonth)) &&
+        (!selectedYear ||
+          parseInt(eventYear) === parseInt(selectedYear) ||
+          bookingYear === parseInt(selectedYear))
       )
     })
     .map((item) => {
@@ -192,7 +206,7 @@ export default function AllBookingsTable() {
           month: '2-digit',
           year: 'numeric',
         })
-        .replace(/\//g, '-')
+        .replace(/\//g, '/')
 
       const formattedBookingDate = new Date(item.date)
         .toLocaleDateString('en-GB', {
@@ -210,7 +224,7 @@ export default function AllBookingsTable() {
         createdAt: formattedCreatedAt,
         contact: item.contact,
         location: item.location,
-        date: formattedBookingDate,
+        date: formatDate(item.date), // Format the Event Date
         timings: item.timings,
         totalAmount: item.totalAmount,
         functionCat: item.functionCat,
@@ -224,10 +238,23 @@ export default function AllBookingsTable() {
       <div style={{ height: '100%', width: '100%' }}>
         <FiltersContainer>
           <StyledSelect
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
+            value={selectedBookingMonth}
+            onChange={(e) => setSelectedBookingMonth(e.target.value)}
           >
-            <option value=''>Month</option>
+            <option value=''>Booking Month</option>
+            {[...Array(12).keys()].map((month) => (
+              <option key={month} value={month + 1}>
+                {new Date(0, month).toLocaleString('default', {
+                  month: 'long',
+                })}
+              </option>
+            ))}
+          </StyledSelect>
+          <StyledSelect
+            value={selectedEventMonth}
+            onChange={(e) => setSelectedEventMonth(e.target.value)}
+          >
+            <option value=''>Event Month</option>
             {[...Array(12).keys()].map((month) => (
               <option key={month} value={month + 1}>
                 {new Date(0, month).toLocaleString('default', {

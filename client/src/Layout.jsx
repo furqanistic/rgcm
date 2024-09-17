@@ -9,11 +9,14 @@ const Wrap = styled.div`
   display: flex;
   height: 100%;
   text-transform: capitalize;
+  margin-top: 3rem;
 `
 const Left = styled.div`
   max-width: 300px;
-  padding: 0 1rem;
+  /* padding: 0 1rem; */
   min-height: 100%;
+  display: flex;
+  justify-content: center;
   background-color: black;
 `
 const Right = styled.div`
@@ -21,23 +24,7 @@ const Right = styled.div`
   height: 100%;
   background-color: #00000081;
 `
-const UserBox = styled.div`
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #00000097;
-  padding: 0.5rem 1rem;
-  border-radius: 30px;
-  position: absolute;
-  color: white;
-  right: 10px;
-  top: 10px;
-`
-const UserText = styled.p`
-  font-size: 1rem;
-  font-weight: 400;
-`
+
 const Layout = ({ children }) => {
   const { currentUser } = useSelector((state) => state.user)
 
@@ -46,12 +33,7 @@ const Layout = ({ children }) => {
       <Left>
         <Sidebar />
       </Left>
-      <Right>
-        <UserBox>
-          <UserText>{currentUser.username}</UserText>
-        </UserBox>
-        {children}
-      </Right>
+      <Right>{children}</Right>
     </Wrap>
   )
 }
