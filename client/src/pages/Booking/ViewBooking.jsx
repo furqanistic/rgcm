@@ -219,37 +219,52 @@ const ViewBooking = () => {
     const originalWidth = input.style.width
     input.style.width = '1200px' // You can adjust this value based on the desired output
 
-    html2canvas(input, { scale: 1 }).then((canvas) => {
+    html2canvas(input, {
+      scale: 2, // Increase scale for higher resolution
+      useCORS: true, // Enable CORS to capture images from other domains
+      logging: false, // Disable logging for better performance
+      backgroundColor: '#ffffff', // Set background color to white
+    }).then((canvas) => {
       // Restore the original width
       input.style.width = originalWidth
 
-      const imgData = canvas.toDataURL('image/png')
+      const imgData = canvas.toDataURL('image/jpeg', 1.0) // Use JPEG with maximum quality
 
       // Calculate the ratio to maintain the aspect ratio of the canvas
-      const imgWidth = 225 // A4 dimensions in mm
+      const imgWidth = 210 // A4 width in mm (slightly reduced to ensure margins)
       const pageHeight = 297
       const imgHeight = (canvas.height * imgWidth) / canvas.width
       let heightLeft = imgHeight
       const pdf = new jsPDF('p', 'mm', 'a4')
       let position = 0
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      while (heightLeft > 0) {
-        position += imgHeight
-        if (position + imgHeight <= pageHeight) {
+
+      pdf.setProperties({
+        title: `Booking Form - ${host}`,
+        subject: 'RGC Booking Form',
+        author: 'RGC Booking System',
+        keywords: 'booking, form, RGC',
+        creator: 'RGC Booking System',
+      })
+
+      while (heightLeft >= 0) {
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          0,
+          position,
+          imgWidth,
+          imgHeight,
+          '',
+          'FAST'
+        )
+        heightLeft -= pageHeight
+        if (heightLeft > 0) {
           pdf.addPage()
-          pdf.addImage(
-            imgData,
-            'PNG',
-            0,
-            position % pageHeight,
-            imgWidth,
-            imgHeight
-          )
+          position -= pageHeight
         }
-        heightLeft -= imgHeight
       }
 
-      pdf.save(host)
+      pdf.save(`${host}_booking_form.pdf`)
       if (savePdfRef.current) {
         savePdfRef.current.style.display = 'block'
       }

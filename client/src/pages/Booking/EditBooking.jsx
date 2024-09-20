@@ -430,7 +430,7 @@ const EditBooking = () => {
     'Upper Deck',
     'Banquett & Upper Deck',
   ]
-  const StatusOptions = ['Choose', 'Paid', 'Not Paid', 'Pending']
+  const StatusOptions = ['Choose', 'Paid', 'Not Paid', 'Pending', 'Adv Paid']
 
   return (
     <Layout>

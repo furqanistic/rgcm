@@ -265,10 +265,6 @@ export default function MonthlyDataTable() {
   function generateRowsForMonth(data) {
     const rows = []
 
-    // Generate placeholder rows first
-    // Inside generateRowsForMonth function
-    // Inside generateRowsForMonth function
-    // Inside generateRowsForMonth function
     const daysInMonth = getDaysInMonth(selectedMonth, currentYear)
     for (let i = 1; i <= daysInMonth; i++) {
       rows.push({

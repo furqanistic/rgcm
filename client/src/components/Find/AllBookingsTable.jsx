@@ -136,7 +136,7 @@ export default function AllBookingsTable() {
   })
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'id', headerName: 'ID', width: 80 },
     { field: 'username', headerName: 'Booked By', width: 100 },
     { field: 'host', headerName: 'Host', width: 160 },
     {

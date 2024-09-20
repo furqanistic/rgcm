@@ -462,7 +462,7 @@ const NewBooking = () => {
   const categories = ['Choose', 'Temporary', 'Permanent']
   const formcats = ['Choose', 'Regular', 'BOB']
   const times = ['Choose', 'Day', 'Night']
-  const StatusOptions = ['Choose', 'Paid', 'Not Paid', 'Pending']
+  const StatusOptions = ['Choose', 'Paid', 'Not Paid', 'Pending', 'Adv Paid']
   const places = [
     'Choose',
     'Banquett',
