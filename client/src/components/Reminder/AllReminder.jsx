@@ -17,12 +17,11 @@ const GreenBtn = styled.button`
   margin-bottom: 10px;
   cursor: pointer;
 `
+
 function exportToCSV(rows) {
   const ws = XLSX.utils.json_to_sheet(rows)
   const csv = XLSX.utils.sheet_to_csv(ws)
   const blob = new Blob([csv], { type: 'text/csv' })
-
-  // Create a download link and click it
   const a = document.createElement('a')
   const url = window.URL.createObjectURL(blob)
   a.href = url
@@ -30,6 +29,7 @@ function exportToCSV(rows) {
   a.click()
   window.URL.revokeObjectURL(url)
 }
+
 const darkTheme = createTheme({
   palette: {
     mode: 'light',
@@ -44,14 +44,34 @@ const columns = [
   { field: 'location', headerName: 'Location', width: 140 },
   { field: 'date', headerName: 'Date', width: 130 },
   { field: 'timings', headerName: 'Timings', width: 90 },
-  { field: 'totalAmount', headerName: 'Total Amount', width: 100 },
+  { field: 'totalAmount', headerName: 'Total ', width: 100 },
+  { field: 'advancePayment', headerName: 'Advance', width: 100 },
+  {
+    field: 'remainingAmount',
+    headerName: 'Remaining',
+    width: 100,
+    renderCell: (params) => {
+      const isNegative = params.value < 0
+      return (
+        <span
+          style={{
+            color: 'red',
+            backgroundColor: isNegative ? 'yellow' : 'transparent',
+            padding: isNegative ? '2px 4px' : '0',
+            borderRadius: isNegative ? '4px' : '0',
+          }}
+        >
+          {params.value}
+        </span>
+      )
+    },
+  },
   { field: 'functionCat', headerName: 'Booking Type', width: 100 },
   { field: 'paymentStatus', headerName: 'Status', width: 120 },
 ]
 
 export default function AllReminder() {
   const navigate = useNavigate()
-
   const { data, status } = useQuery('all-reminders', async () => {
     const res = await axiosInstance.get(`/booking/pend-bookings`)
     if (res.data === 'No temporary bookings found') {
@@ -59,12 +79,9 @@ export default function AllReminder() {
     }
     return res.data
   })
-  if (status === 'loading') {
-    return <Loader />
-  }
-  if (status === 'error') {
-    return <p>No bookings found</p>
-  }
+
+  if (status === 'loading') return <Loader />
+  if (status === 'error') return <p>No bookings found</p>
 
   const rows = data.map((item) => ({
     id: item.serialNo,
@@ -76,9 +93,12 @@ export default function AllReminder() {
     date: item.date,
     timings: item.timings,
     totalAmount: item.totalAmount,
+    advancePayment: item.advancePay,
+    remainingAmount: item.totalAmount - item.advancePay,
     functionCat: item.functionCat,
     paymentStatus: item.paymentStatus,
   }))
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div style={{ height: '100%', width: '100%' }}>

@@ -48,7 +48,6 @@ const columns = [
   },
   { field: 'timings', headerName: 'Timings', width: 100 },
   { field: 'functionCat', headerName: 'Booking Type', width: 120 },
-  { field: 'formType', headerName: 'Form Type', width: 120 },
 ]
 
 export default function AllTempTable() {

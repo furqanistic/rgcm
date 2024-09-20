@@ -100,6 +100,14 @@ function exportToCSV(rows) {
   window.URL.revokeObjectURL(url)
 }
 
+function getCurrentMonthYear() {
+  const now = new Date()
+  return {
+    month: now.getMonth() + 1,
+    year: now.getFullYear(),
+  }
+}
+
 export default function AllBookingsTable() {
   const { currentUser } = useSelector((state) => state.user)
   const navigate = useNavigate()
